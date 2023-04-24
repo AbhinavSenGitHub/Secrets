@@ -27,7 +27,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://0.0.0.0:27017/secret", {useNewUrlParser: true});
+mongoose.connect("mongodb://0.0.0.0:27017/secret", { useNewUrlParser: true });
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema ({
@@ -36,7 +36,6 @@ const userSchema = new mongoose.Schema ({
   googleId: String,
   secret: String
 });
-
 
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
@@ -131,7 +130,7 @@ app.get("/submit", function(req, res){
   if (req.isAuthenticated()){
     res.render("submit");
   } else {
-    res.redirect("/login");
+    res.redirect("/register");
   }
 });
 
