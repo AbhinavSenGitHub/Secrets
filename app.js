@@ -86,15 +86,19 @@ app.get("/", function(req, res){
 
 // delete request using onchange in checkbox
 app.post("/delete", function(req, res){
-  const deleteItem = req.body.checkbox;
-  User.findByIdAndRemove(deleteItem, function(err){
-    if(!err){
-      res.redirect("/secrets")
-      console.log("Successful removed");
+  User.findById(req.user.id, function(err, foundUser){
+    if (err) {
+      console.log(err);
+    } else {
+      if (foundUser) {
+        foundUser.secret = '';
+        foundUser.save(function(){
+          res.redirect("/secrets");
+        });
+      }
     }
-  })
-  console.log(req.body.checkbox);
-})
+  });
+});
 app.get("/auth/google",
   passport.authenticate('google', { scope: ["profile"] })
 );
