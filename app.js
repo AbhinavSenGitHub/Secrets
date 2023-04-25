@@ -9,6 +9,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
+const http = require('http');
 
 const app = express();
 
@@ -70,8 +71,9 @@ passport.use(new GoogleStrategy({
 ));
 
 app.get("/", function(req, res){
-  // res.render("home");
 
+//auto AutoRefrash
+ res.setHeader('Refresh', '5');
   User.find({"secret": {$ne: null}}, function(err, foundUsers){
     if (err){
       console.log(err);
@@ -85,26 +87,22 @@ app.get("/", function(req, res){
 });
 
 // delete request using onchange in checkbox
-app.post("/delete", function(req, res){
+app.get("/delete", function(req, res){
   User.findById(req.user.id, function(err, foundUser){
     if (err) {
       console.log(err);
     } else {
       if (foundUser) {
-        foundUser.secret = '';
-        // document.getElementById("checkbox").style.display= "none";
-        // foundUser.secret.style.display = "none";
-        if(foundUser.secret === ''){
-          // document.getElementById("checkbox").style.display= "none";
-          // foundUser.secret.style.display = "none";
-        }
+        foundUser.secret = null;
         foundUser.save(function(){
-          res.redirect("/secrets");
+          res.redirect("/");
+          // res.render("home", {usersWithSecrets: foundUsers, isAuthenticated: req.isAuthenticated(), correntUser: foundUser._id});
         });
       }
     }
   });
 });
+
 app.get("/auth/google",
   passport.authenticate('google', { scope: ["profile"] })
 );
@@ -113,7 +111,7 @@ app.get("/auth/google/secrets",
   passport.authenticate('google', { failureRedirect: "/login" }),
   function(req, res) {
     // Successful authentication, redirect to secrets.
-    res.redirect("/secrets");
+    res.redirect("/");
   });
 
 app.get("/login", function(req, res){
@@ -157,7 +155,7 @@ app.post("/submit", function(req, res){
       if (foundUser) {
         foundUser.secret = submittedSecret;
         foundUser.save(function(){
-          res.redirect("/secrets");
+          res.redirect("/");
         });
       }
     }
@@ -166,6 +164,7 @@ app.post("/submit", function(req, res){
 
 app.get("/logout", function(req, res){
   req.logout();
+  // localStorage.removeItem('secret');
   res.redirect("/");
 });
 
@@ -177,7 +176,7 @@ app.post("/register", function(req, res){
       res.redirect("/register");
     } else {
       passport.authenticate("local")(req, res, function(){
-        res.redirect("/secrets");
+        res.redirect("/");
       });
     }
   });
@@ -196,7 +195,7 @@ app.post("/login", function(req, res){
       console.log(err);
     } else {
       passport.authenticate("local")(req, res, function(){
-        res.redirect("/secrets");
+        res.redirect("/");
       });
     }
   });
