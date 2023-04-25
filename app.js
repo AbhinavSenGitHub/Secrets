@@ -77,7 +77,7 @@ app.get("/", function(req, res){
       console.log(err);
     } else {
       if (foundUsers) {
-        res.render("home", {usersWithSecrets: foundUsers});
+        res.render("home", {usersWithSecrets: foundUsers, isAuthenticated: req.isAuthenticated()});
       }
     }
   });
@@ -92,6 +92,12 @@ app.post("/delete", function(req, res){
     } else {
       if (foundUser) {
         foundUser.secret = '';
+        // document.getElementById("checkbox").style.display= "none";
+        // foundUser.secret.style.display = "none";
+        if(foundUser.secret === ''){
+          // document.getElementById("checkbox").style.display= "none";
+          // foundUser.secret.style.display = "none";
+        }
         foundUser.save(function(){
           res.redirect("/secrets");
         });

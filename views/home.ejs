@@ -12,8 +12,13 @@
     <% }) %>
 
     <hr>
-    <a class="btn btn-light btn-lg" href="/register" role="button">Register</a>
-    <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
+    <% if(isAuthenticated){ %>
+      <a class="btn btn-light btn-lg" href="/submit" role="button">Add new Secret️😃</a>
+     <% } else {   %>
+       <a class="btn btn-light btn-lg" href="/register" role="button">Register</a>
+       <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
+    <% } %>
+
 
   </div>
 </div>
