@@ -13,6 +13,7 @@ const http = require('http');
 
 const app = express();
 
+let temp = '';
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
@@ -35,7 +36,8 @@ const userSchema = new mongoose.Schema ({
   email: String,
   password: String,
   googleId: String,
-  secret: String
+  secret: String,
+  // temp: String         //added temp
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -73,7 +75,7 @@ passport.use(new GoogleStrategy({
 app.get("/", function(req, res){
 
 //auto AutoRefrash
- // res.setHeader('Refresh', '5');
+ // res.setHeader('Refresh', '3');
   User.find({"secret": {$ne: null}}, function(err, foundUsers){
     if (err){
       console.log(err);
@@ -167,8 +169,11 @@ app.get("/logout", function(req, res){
     if(err) {
       console.log(err);
     } else {
-      console.log(req.user._id);
-    User.updateOne({_id: req.user._id}, {secret: null}, function(err){
+      console.log(req.user.secret);
+      temp = req.user.secret;
+      // localStorage.setItem('temp', 'secret');
+      // console.log("req.user.temp:-  "  +  req.user.temp);    // change temp with req.user.temp
+      User.updateOne({_id: req.user._id}, {secret: null}, function(err){
       if(err){
         console.log(err);
       }else{
@@ -207,7 +212,20 @@ app.post("/login", function(req, res){
       console.log(err);
     } else {
       passport.authenticate("local")(req, res, function(){
-        res.redirect("/");
+        // console.log("login temp "  + req.user.temp);
+
+        User.updateOne({_id: req.user._id}, {secret: temp}, function(err){
+          if(err){
+            console.log(err);
+          }else{
+            console.log("Successfuly login");
+            res.redirect("/");
+          }
+        })
+        // console.log("login:-  " + req.user._id);
+        // req.user.secret = temp;
+        // console.log("login secret:-  " + temp);
+        // res.redirect("/");
       });
     }
   });
