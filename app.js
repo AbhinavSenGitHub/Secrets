@@ -73,7 +73,7 @@ passport.use(new GoogleStrategy({
 app.get("/", function(req, res){
 
 //auto AutoRefrash
- res.setHeader('Refresh', '5');
+ // res.setHeader('Refresh', '5');
   User.find({"secret": {$ne: null}}, function(err, foundUsers){
     if (err){
       console.log(err);
@@ -163,9 +163,22 @@ app.post("/submit", function(req, res){
 });
 
 app.get("/logout", function(req, res){
-  req.logout();
-  // localStorage.removeItem('secret');
-  res.redirect("/");
+  req.session.destroy(function(err) {
+    if(err) {
+      console.log(err);
+    } else {
+      console.log(req.user._id);
+    User.updateOne({_id: req.user._id}, {secret: null}, function(err){
+      if(err){
+        console.log(err);
+      }else{
+        console.log("Successfuly logout");
+        res.redirect("/");
+      }
+    })
+
+    }
+  });
 });
 
 app.post("/register", function(req, res){
@@ -179,8 +192,7 @@ app.post("/register", function(req, res){
         res.redirect("/");
       });
     }
-  });
-
+  })
 });
 
 app.post("/login", function(req, res){
