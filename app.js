@@ -30,8 +30,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://0.0.0.0:27017/secret", { useNewUrlParser: true });
-mongoose.set("useCreateIndex", true);
+// mongoose.connect("mongodb://0.0.0.0:27017/secret", { useNewUrlParser: true });
+mongoose.connect(process.env.DATABASE, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema ({
   email: String,
