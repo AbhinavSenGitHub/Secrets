@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
 const session = require('express-session');
+// const session = require('cookie-session');
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -75,7 +76,7 @@ passport.use(new GoogleStrategy({
 app.get("/", function(req, res){
 
 //auto AutoRefrash
- // res.setHeader('Refresh', '3');
+ res.setHeader('Refresh', '5');
   User.find({"secret": {$ne: null}}, function(err, foundUsers){
     if (err){
       console.log(err);
@@ -169,7 +170,7 @@ app.get("/logout", function(req, res){
     if(err) {
       console.log(err);
     } else {
-      console.log(req.user.secret);
+      // console.log(req.user.secret);
       temp = req.user.secret;
       // localStorage.setItem('temp', 'secret');
       // console.log("req.user.temp:-  "  +  req.user.temp);    // change temp with req.user.temp
